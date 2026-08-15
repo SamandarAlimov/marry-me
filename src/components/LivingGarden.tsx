@@ -1,7 +1,8 @@
-import { motion } from 'framer-motion'
+import { motion, useTransform } from 'framer-motion'
 import { useMemo } from 'react'
 import { createParticles } from '../engine/particle'
 import { GardenDetails } from './GardenDetails'
+import { useWindField } from '../engine/wind'
 
 interface LivingGardenProps { active: boolean }
 
@@ -16,6 +17,8 @@ const trees = [
 
 export function LivingGarden({ active }: LivingGardenProps) {
   const fireflies = useMemo(() => createParticles(18, 91), [])
+  const wind = useWindField()
+  const crownY = useTransform(wind.y, [-1, 1], [-2, 2])
 
   return (
     <motion.div className="living-garden" aria-hidden="true" initial={{ opacity: 0, y: 80 }} animate={{ opacity: active ? 1 : 0, y: active ? 0 : 80 }} transition={{ duration: 1.6, ease: [0.16, 1, 0.3, 1] }}>
@@ -25,7 +28,7 @@ export function LivingGarden({ active }: LivingGardenProps) {
       {trees.map((tree, index) => (
         <motion.div key={index} className="tree" style={{ left: tree.x, scale: tree.scale }} initial={{ y: 30, opacity: 0 }} animate={{ y: active ? 0 : 30, opacity: active ? 1 : 0 }} transition={{ delay: tree.delay, duration: 1.4, ease: 'easeOut' }}>
           <div className="trunk" />
-          <motion.div className="crown" animate={{ x: [-2, 2, -2], rotate: [-1, 1, -1] }} transition={{ duration: 5 + tree.scale, repeat: Infinity, ease: 'easeInOut', delay: tree.delay }}>
+          <motion.div className="crown" style={{ x: useTransform(wind.x, [-1, 1], [-3 - tree.scale * 2, 3 + tree.scale * 2]), y: crownY }} animate={{ rotate: [-1, 1, -1] }} transition={{ duration: 5 + tree.scale, repeat: Infinity, ease: 'easeInOut', delay: tree.delay }}>
             <i /><i /><i /><i />
           </motion.div>
         </motion.div>
