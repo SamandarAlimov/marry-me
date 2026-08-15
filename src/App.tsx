@@ -1,11 +1,32 @@
-import { motion } from 'framer-motion'
-import { useState } from 'react'
+import { motion, useMotionValue, useSpring } from 'framer-motion'
+import { useEffect, useState } from 'react'
+import { Atmosphere } from './components/Atmosphere'
+import { cinematicEase } from './engine/motion'
+import { initialNarrativeState, reduceNarrative } from './engine/narrative'
+import type { NarrativeState } from './engine/narrative'
 
 export function App() {
-  const [started, setStarted] = useState(false)
+  const [narrative, setNarrative] = useState<NarrativeState>(initialNarrativeState)
+  const pointerX = useMotionValue(0)
+  const pointerY = useMotionValue(0)
+  const cameraX = useSpring(pointerX, { stiffness: 40, damping: 22 })
+  const cameraY = useSpring(pointerY, { stiffness: 40, damping: 22 })
+
+  useEffect(() => {
+    const onPointerMove = (event: PointerEvent) => {
+      pointerX.set((event.clientX / window.innerWidth) * 2 - 1)
+      pointerY.set((event.clientY / window.innerHeight) * 2 - 1)
+    }
+    window.addEventListener('pointermove', onPointerMove, { passive: true })
+    return () => window.removeEventListener('pointermove', onPointerMove)
+  }, [pointerX, pointerY])
+
+  const open = () => setNarrative((state) => reduceNarrative(state, { type: 'OPEN' }))
 
   return (
-    <main className="experience" onClick={() => setStarted(true)}>
+    <main className="experience">
+      <Atmosphere />
+      <motion.div className="camera" style={{ x: cameraX, y: cameraY }} aria-hidden="true" />
       <div className="grain" />
       <div className="moon" />
       <div className="orb orb-a" />
@@ -13,9 +34,9 @@ export function App() {
 
       <motion.div
         className="scene"
-        animate={{ opacity: 1, y: 0 }}
         initial={{ opacity: 0, y: 24 }}
-        transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1.4, ease: cinematicEase }}
       >
         <motion.p
           className="bismillah"
@@ -28,8 +49,8 @@ export function App() {
 
         <motion.div
           className="title-wrap"
-          animate={{ scale: started ? 1.015 : 1 }}
-          transition={{ duration: 1.2, ease: 'easeOut' }}
+          animate={{ x: narrative.opened ? -18 : 0, opacity: narrative.opened ? 0.42 : 1 }}
+          transition={{ duration: 0.9, ease: cinematicEase }}
         >
           <span className="eyebrow">Bir kichik hikoya</span>
           <h1>
@@ -37,8 +58,7 @@ export function App() {
             <em> shunchaki so'rab bo'lmaydi.</em>
           </h1>
           <p className="intro">
-            Ba'zilariga javob berishdan oldin, ularni qanday so'rash haqida
-            o'ylash kerak.
+            Ba'zilariga javob berishdan oldin, ularni qanday so'rash haqida o'ylash kerak.
           </p>
         </motion.div>
 
@@ -46,14 +66,31 @@ export function App() {
           className="enter"
           whileHover={{ y: -4, scale: 1.015 }}
           whileTap={{ scale: 0.98 }}
-          onClick={(event) => {
-            event.stopPropagation()
-            setStarted(true)
-          }}
+          onClick={open}
+          disabled={narrative.opened}
         >
-          <span>{started ? 'Hikoya boshlandi' : 'Boshlaymiz'}</span>
+          <span>{narrative.opened ? 'Hikoya ochildi' : 'Boshlaymiz'}</span>
           <span className="arrow">↗</span>
         </motion.button>
+
+        {narrative.opened && (
+          <motion.section
+            className="threshold"
+            initial={{ opacity: 0, y: 60 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.35, duration: 1.2, ease: cinematicEase }}
+          >
+            <span className="eyebrow">01 / 05 — Ostona</span>
+            <h2>Shoshilmang.</h2>
+            <p>Bu sahifani ko'rish uchun emas, bir oz yashash uchun ochdingiz.</p>
+            <button
+              className="enter"
+              onClick={() => setNarrative((state) => reduceNarrative(state, { type: 'EXPLORE' }))}
+            >
+              <span>Davom etish</span><span className="arrow">↗</span>
+            </button>
+          </motion.section>
+        )}
       </motion.div>
 
       <div className="horizon" />
@@ -61,7 +98,7 @@ export function App() {
       <div className="silhouette silhouette-front" />
 
       <footer>
-        <span>01 / 05</span>
+        <span>{String(Math.min(narrative.scene + 1, 5)).padStart(2, '0')} / 05</span>
         <span>Marry Me</span>
         <span>© Qalb</span>
       </footer>
