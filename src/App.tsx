@@ -1,6 +1,7 @@
 import { motion, useMotionValue, useSpring } from 'framer-motion'
 import { useEffect, useState } from 'react'
 import { Atmosphere } from './components/Atmosphere'
+import { Butterflies } from './components/Butterflies'
 import { InteractiveGarden } from './components/InteractiveGarden'
 import { LivingGarden } from './components/LivingGarden'
 import { SceneTransition } from './components/SceneTransition'
@@ -30,6 +31,7 @@ export function App() {
     <main className="experience">
       <Atmosphere />
       <LivingGarden active={isGarden} />
+      <Butterflies active={isGarden} />
       <InteractiveGarden active={isGarden} />
       <motion.div className="camera" style={{ x: cameraX, y: cameraY }} aria-hidden="true" />
       <div className="grain" />
