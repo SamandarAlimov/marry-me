@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import { useMemo } from 'react'
+import '../styles/acceptance.css'
 
 export function AcceptanceBurst({ active }: { active: boolean }) {
   const particles = useMemo(() => Array.from({ length: 64 }, (_, id) => {
