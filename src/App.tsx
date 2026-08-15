@@ -1,5 +1,6 @@
 import { motion, useMotionValue, useSpring } from 'framer-motion'
 import { useEffect, useState } from 'react'
+import { AcceptanceBurst } from './components/AcceptanceBurst'
 import { Atmosphere } from './components/Atmosphere'
 import { AtmosphericMotes } from './components/AtmosphericMotes'
 import { Butterflies } from './components/Butterflies'
@@ -50,6 +51,7 @@ export function App() {
     <FlowerField active={bloom} progress={scene === 'bloom' ? story.growthProgress : 1} />
     <Butterflies active={accepted} />
     <InteractiveGarden active={garden} />
+    <AcceptanceBurst active={accepted} />
     <motion.div className="camera" style={{ x: cameraX, y: cameraY }} aria-hidden="true" />
     <div className="grain" /><div className="moon" /><div className="orb orb-a" /><div className="orb orb-b" />
     <SceneTransition sceneKey={scene}>
@@ -60,7 +62,7 @@ export function App() {
         {scene === 'words' && <section className="threshold"><span className="eyebrow">02 / 08 — So'z</span><h2>Ba'zi sukunatlar ikki kishilik bo'ladi.</h2><p>Bu hikoya hali o'zining eng muhim gapini aytmadi.</p><button className="enter" onClick={() => send({ type: 'CONTINUE' })}><span>Davom etamiz</span><span className="arrow">↗</span></button></section>}
         {scene === 'growth' && <section className="garden-copy"><span className="eyebrow">03 / 08 — O'sish</span><h2>Ikki novda. Ikki hayot.</h2><p>Scroll qiling. Har bir harakat bilan ular biroz o'sadi.</p><div className="growth-meter" aria-label={`O'sish ${Math.round(story.growthProgress * 100)} foiz`}><span style={{ transform: `scaleX(${story.growthProgress})` }} /></div><p className="growth-hint">{story.growthProgress < 1 ? 'Yana bir oz...' : 'Gullash boshlandi.'}</p></section>}
         {scene === 'bloom' && <section className="garden-copy"><span className="eyebrow">04 / 08 — Gullash</span><h2>Muhabbat shovqinli bo'lishi shart emas.</h2><p>Ba'zan u shunchaki yonida tinchlik topishdir.</p><button className="enter" onClick={() => send({ type: 'CONTINUE' })}><span>Yana bir qadam</span><span className="arrow">↗</span></button></section>}
-        {scene === 'question' && <section className="question"><span className="eyebrow">05 / 08 — Savol</span><h2>Menga turmushga chiqasizmi?</h2><p>Bu savolga shoshmasdan javob berishingiz mumkin.</p><button className="enter" onClick={() => send({ type: 'ANSWER_YES' })}><span>Ha. Birga yuramiz.</span><span className="arrow">↗</span></button></section>}
+        {scene === 'question' && <section className="question"><span className="eyebrow">05 / 08 — Savol</span><h2>Menga turmushga chiqasizmi?</h2><p>Bu savolga shoshmasdan javob berishingiz mumkin.</p><motion.button className="enter proposal-button" whileHover={{ y: -4 }} whileTap={{ scale: .98 }} onClick={() => send({ type: 'ANSWER_YES' })}><span>Ha. Birga yuramiz.</span><span className="arrow">↗</span></motion.button></section>}
         {scene === 'accepted' && <section className="question"><span className="eyebrow">06 / 08 — Bismillah</span><h2>Unda bu yo'lni birga boshlaymiz.</h2><p>Endi sahifa emas, birinchi kunimiz haqida o'ylashimiz mumkin.</p><button className="enter" onClick={() => send({ type: 'PLAN_FIRST_DAY' })}><span>Birinchi kunni tanlaymiz</span><span className="arrow">↗</span></button></section>}
         {scene === 'first-day' && <section className="question"><span className="eyebrow">07 / 08 — Birinchi kun</span><h2>Bugun rejangiz bormi?</h2><p>Bu yerda keyingi bosqich: kun, joy, film, sayr va boshqa rejalarni birga tanlash.</p></section>}
       </motion.div>
