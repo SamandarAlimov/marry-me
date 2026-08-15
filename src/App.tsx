@@ -5,7 +5,7 @@ import { LivingGarden } from './components/LivingGarden'
 import { SceneTransition } from './components/SceneTransition'
 import { cinematicEase } from './engine/motion'
 import { initialNarrativeState, reduceNarrative } from './engine/narrative'
-import type { NarrativeState } from './engine/narrative'
+import type { NarrativeEvent, NarrativeState } from './engine/narrative'
 
 export function App() {
   const [narrative, setNarrative] = useState<NarrativeState>(initialNarrativeState)
@@ -23,9 +23,7 @@ export function App() {
     return () => window.removeEventListener('pointermove', onPointerMove)
   }, [pointerX, pointerY])
 
-  const send = (type: 'OPEN' | 'EXPLORE' | 'UNLOCK_REVEAL' | 'ANSWER') =>
-    setNarrative((state) => reduceNarrative(state, { type } as never))
-
+  const send = (event: NarrativeEvent) => setNarrative((state) => reduceNarrative(state, event))
   const isGarden = narrative.scene >= 2
 
   return (
@@ -51,7 +49,7 @@ export function App() {
                 <h1>Ba'zi savollarni <em>shunchaki so'rab bo'lmaydi.</em></h1>
                 <p className="intro">Ba'zilariga javob berishdan oldin, ularni qanday so'rash haqida o'ylash kerak.</p>
               </div>
-              <motion.button className="enter" whileHover={{ y: -4, scale: 1.015 }} whileTap={{ scale: 0.98 }} onClick={() => send('OPEN')}>
+              <motion.button className="enter" whileHover={{ y: -4, scale: 1.015 }} whileTap={{ scale: 0.98 }} onClick={() => send({ type: 'OPEN' })}>
                 <span>Boshlaymiz</span><span className="arrow">↗</span>
               </motion.button>
             </>
@@ -62,7 +60,7 @@ export function App() {
               <span className="eyebrow">01 / 05 — Ostona</span>
               <h2>Shoshilmang.</h2>
               <p>Bu sahifani ko'rish uchun emas, bir oz yashash uchun ochdingiz.</p>
-              <button className="enter" onClick={() => send('EXPLORE')}>
+              <button className="enter" onClick={() => send({ type: 'EXPLORE' })}>
                 <span>Bog‘ga kirish</span><span className="arrow">↗</span>
               </button>
             </section>
@@ -73,7 +71,7 @@ export function App() {
               <span className="eyebrow">02 / 05 — Bir kun</span>
               <h2>Bugun rejangiz bormi?</h2>
               <p>Chunki ba'zi rejalar oldindan yozilmaydi. Ular birga yaratiladi.</p>
-              <button className="enter" onClick={() => send('UNLOCK_REVEAL')}>
+              <button className="enter" onClick={() => send({ type: 'UNLOCK_REVEAL' })}>
                 <span>Rejani davom ettirish</span><span className="arrow">↗</span>
               </button>
             </section>
