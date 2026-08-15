@@ -5,6 +5,8 @@ export interface WindField {
   x: MotionValue<number>
   y: MotionValue<number>
   strength: MotionValue<number>
+  targetX: MotionValue<number>
+  targetY: MotionValue<number>
 }
 
 /** Converts pointer movement into a slowly settling environmental wind field. */
@@ -14,10 +16,10 @@ export function useWindField(): WindField {
   const x = useSpring(targetX, { stiffness: 26, damping: 18, mass: 0.7 })
   const y = useSpring(targetY, { stiffness: 26, damping: 18, mass: 0.7 })
   const strength = useTransform([x, y], ([currentX, currentY]) => Math.min(1, Math.hypot(currentX, currentY)))
-  return { x, y, strength }
+  return { x, y, strength, targetX, targetY }
 }
 
 export function setWindTarget(field: WindField, x: number, y: number) {
-  field.x.set(Math.max(-1, Math.min(1, x)))
-  field.y.set(Math.max(-1, Math.min(1, y)))
+  field.targetX.set(Math.max(-1, Math.min(1, x)))
+  field.targetY.set(Math.max(-1, Math.min(1, y)))
 }
