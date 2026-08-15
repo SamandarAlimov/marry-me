@@ -5,6 +5,7 @@ import { Atmosphere } from './components/Atmosphere'
 import { AtmosphericMotes } from './components/AtmosphericMotes'
 import { Butterflies } from './components/Butterflies'
 import { Constellation } from './components/Constellation'
+import { FirstDayPlanner } from './components/FirstDayPlanner'
 import { FlowerField } from './components/FlowerField'
 import { InteractiveGarden } from './components/InteractiveGarden'
 import { LivingGarden } from './components/LivingGarden'
@@ -64,7 +65,7 @@ export function App() {
         {scene === 'bloom' && <section className="garden-copy"><span className="eyebrow">04 / 08 — Gullash</span><h2>Muhabbat shovqinli bo'lishi shart emas.</h2><p>Ba'zan u shunchaki yonida tinchlik topishdir.</p><button className="enter" onClick={() => send({ type: 'CONTINUE' })}><span>Yana bir qadam</span><span className="arrow">↗</span></button></section>}
         {scene === 'question' && <section className="question"><span className="eyebrow">05 / 08 — Savol</span><h2>Menga turmushga chiqasizmi?</h2><p>Bu savolga shoshmasdan javob berishingiz mumkin.</p><motion.button className="enter proposal-button" whileHover={{ y: -4 }} whileTap={{ scale: .98 }} onClick={() => send({ type: 'ANSWER_YES' })}><span>Ha. Birga yuramiz.</span><span className="arrow">↗</span></motion.button></section>}
         {scene === 'accepted' && <section className="question"><span className="eyebrow">06 / 08 — Bismillah</span><h2>Unda bu yo'lni birga boshlaymiz.</h2><p>Endi sahifa emas, birinchi kunimiz haqida o'ylashimiz mumkin.</p><button className="enter" onClick={() => send({ type: 'PLAN_FIRST_DAY' })}><span>Birinchi kunni tanlaymiz</span><span className="arrow">↗</span></button></section>}
-        {scene === 'first-day' && <section className="question"><span className="eyebrow">07 / 08 — Birinchi kun</span><h2>Bugun rejangiz bormi?</h2><p>Bu yerda keyingi bosqich: kun, joy, film, sayr va boshqa rejalarni birga tanlash.</p></section>}
+        {scene === 'first-day' && <FirstDayPlanner />}
       </motion.div>
     </SceneTransition>
     <div className="horizon" /><div className="silhouette silhouette-back" /><div className="silhouette silhouette-front" />
