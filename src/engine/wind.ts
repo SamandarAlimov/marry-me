@@ -14,8 +14,20 @@ export function useWindField(): WindField {
     const currentY = Number(values[1])
     return Math.min(1, Math.hypot(currentX, currentY))
   })
-  useEffect(() => { const move = (event: PointerEvent) => { targetX.set((event.clientX / window.innerWidth) * 2 - 1); targetY.set((event.clientY / window.innerHeight) * 2 - 1) }; const leave = () => { targetX.set(0); targetY.set(0) }; window.addEventListener('pointermove', move, { passive: true }); window.addEventListener('pointerleave', leave); return () => { window.removeEventListener('pointermove', move); window.removeEventListener('pointerleave', leave) } }, [targetX, targetY])
+  useEffect(() => {
+    const move = (event: PointerEvent) => {
+      targetX.set((event.clientX / window.innerWidth) * 2 - 1)
+      targetY.set((event.clientY / window.innerHeight) * 2 - 1)
+    }
+    const leave = () => { targetX.set(0); targetY.set(0) }
+    window.addEventListener('pointermove', move, { passive: true })
+    window.addEventListener('pointerleave', leave)
+    return () => { window.removeEventListener('pointermove', move); window.removeEventListener('pointerleave', leave) }
+  }, [targetX, targetY])
   return { x, y, strength, targetX, targetY }
 }
 
-export function setWindTarget(field: WindField, x: number, y: number) { field.targetX.set(Math.max(-1, Math.min(1, x))); field.targetY.set(Math.max(-1, Math.min(1, y))) }
+export function setWindTarget(field: WindField, x: number, y: number) {
+  field.targetX.set(Math.max(-1, Math.min(1, x)))
+  field.targetY.set(Math.max(-1, Math.min(1, y)))
+}
