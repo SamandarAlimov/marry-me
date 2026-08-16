@@ -3,7 +3,9 @@ import { useMemo } from 'react'
 import { createParticles } from '../engine/particle'
 import { createOrganicPoints } from '../engine/organicMotion'
 import { GardenDetails } from './GardenDetails'
+import { BranchGrowth } from './BranchGrowth'
 import { useWindField } from '../engine/wind'
+import '../styles/branch-growth.css'
 
 interface LivingGardenProps { active: boolean; growthProgress?: number }
 
@@ -27,9 +29,10 @@ export function LivingGarden({ active, growthProgress = 1 }: LivingGardenProps) 
 
   return <motion.div className="living-garden" aria-hidden="true" initial={{ opacity: 0, y: 80 }} animate={{ opacity: active ? 1 : 0, y: active ? 0 : 80 }} transition={{ duration: 1.6, ease: [0.16, 1, 0.3, 1] }}>
     <div className="garden-haze" /><div className="garden-ground" /><GardenDetails />
+    <BranchGrowth active={active} progress={growth} />
     <motion.div className="hero-tree hero-tree-left" style={{ x: heroLeftX, scaleY: growth }} animate={{ opacity: active ? 1 : 0 }} transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}>
       <svg viewBox="0 0 220 520" className="hero-tree-svg"><path className="tree-bark" d="M110 520 C104 430 108 355 104 292 C101 234 73 197 46 158 M105 310 C128 268 151 224 170 178 M75 205 C55 181 36 163 24 136 M146 232 C166 214 190 196 205 164" /><path className="tree-branch" d="M104 292 C88 255 75 221 62 185 M120 330 C139 286 158 248 181 216" /></svg>
-      <div className="hero-leaves">{leaves.slice(0, 19).map((leaf, index) => <motion.i key={leaf.id} style={{ left: `${leaf.x}%`, top: `${leaf.y}%` }} initial={{ opacity: 0, scale: .1 }} animate={active && index < visibleLeaves / 2 ? { opacity: 1, scale: 1, rotate: [-7, 5, -4] , y: [0, -2, 1] } : { opacity: 0, scale: .1 }} transition={{ duration: 1.2, delay: leaf.delay + index * .035, repeat: active && index < visibleLeaves / 2 ? Infinity : 0, repeatType: 'mirror', repeatDelay: .15, ease: 'easeInOut' }} />)}</div>
+      <div className="hero-leaves">{leaves.slice(0, 19).map((leaf, index) => <motion.i key={leaf.id} style={{ left: `${leaf.x}%`, top: `${leaf.y}%` }} initial={{ opacity: 0, scale: .1 }} animate={active && index < visibleLeaves / 2 ? { opacity: 1, scale: 1, rotate: [-7, 5, -4], y: [0, -2, 1] } : { opacity: 0, scale: .1 }} transition={{ duration: 1.2, delay: leaf.delay + index * .035, repeat: active && index < visibleLeaves / 2 ? Infinity : 0, repeatType: 'mirror', repeatDelay: .15, ease: 'easeInOut' }} />)}</div>
     </motion.div>
     <motion.div className="hero-tree hero-tree-right" style={{ x: heroRightX, scaleY: growth }} animate={{ opacity: active ? 1 : 0 }} transition={{ duration: 1.4, delay: .18, ease: [0.16, 1, 0.3, 1] }}>
       <svg viewBox="0 0 220 520" className="hero-tree-svg"><path className="tree-bark" d="M110 520 C116 430 112 355 116 292 C119 234 147 197 174 158 M115 310 C92 268 69 224 50 178 M145 205 C165 181 184 163 196 136 M74 232 C54 214 30 196 15 164" /><path className="tree-branch" d="M116 292 C132 255 145 221 158 185 M100 330 C81 286 62 248 39 216" /></svg>
