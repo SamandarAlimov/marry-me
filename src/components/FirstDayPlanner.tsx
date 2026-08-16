@@ -1,9 +1,12 @@
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 type Choice = { id: string; label: string; meta: string }
+
+type Plan = Record<string, Choice>
+
 const DAYS: Choice[] = [
-  { id: 'today', label: 'Bugun', meta: 'Shoshilinch emas, lekin yaqin' },
+  { id: 'today', label: 'Bugun', meta: 'Agar hozirning o‘zi to‘g‘ri tuyulsa' },
   { id: 'friday', label: 'Juma', meta: 'Sokin va mazmunli kecha' },
   { id: 'weekend', label: 'Dam olish kuni', meta: 'Vaqtni kengroq ajratamiz' },
 ]
@@ -17,29 +20,61 @@ const FILMS: Choice[] = [
   { id: 'beautiful', label: 'Chiroyli film', meta: 'Kechani yengil qiladigan' },
   { id: 'surprise', label: 'Siz tanlang', meta: 'Men sizning tanlovingizga ishonaman' },
 ]
+const PARKS: Choice[] = [
+  { id: 'quiet-park', label: 'Sokin park', meta: 'Uzoq suhbat va sekin sayr uchun' },
+  { id: 'green-park', label: 'Yashil bog‘', meta: 'Tabiat ichida birga vaqt uchun' },
+  { id: 'choose-together', label: 'Birga tanlaymiz', meta: 'Joyning o‘zi ham birgalikdagi qaror' },
+]
+const BOOKS: Choice[] = [
+  { id: 'quran', label: 'Qur’on', meta: 'Birga o‘qish va mulohaza uchun' },
+  { id: 'islamic', label: 'Islomiy kitob', meta: 'Bir-birimizga foydali kitob tanlaymiz' },
+  { id: 'novel', label: 'Badiiy kitob', meta: 'Bir-birimizning didimizni bilish uchun' },
+]
+const TIMES: Choice[] = [
+  { id: 'afternoon', label: 'Peshindan keyin', meta: 'Kun yorug‘ida boshlaymiz' },
+  { id: 'sunset', label: 'Quyosh botishida', meta: 'Sayr uchun yumshoq vaqt' },
+  { id: 'evening', label: 'Kechqurun', meta: 'Sokin kecha uchun' },
+]
+const FINISHES: Choice[] = [
+  { id: 'walk', label: 'Yana biroz sayr', meta: 'Kunni shoshmasdan yakunlaymiz' },
+  { id: 'tea', label: 'Choy va suhbat', meta: 'Kechani suhbat bilan tugatamiz' },
+  { id: 'surprise', label: 'Oxirini rejalashtirmaymiz', meta: 'Eng chiroyli qismi kutilmagan bo‘lsin' },
+]
 
 export function FirstDayPlanner() {
   const [step, setStep] = useState(0)
-  const [answers, setAnswers] = useState<Record<string, Choice>>({})
-  const groups = useMemo(() => [DAYS, PLACES, FILMS], [])
-  const titles = ['Qaysi kun?', 'Qayerga boramiz?', 'Agar kino bo‘lsa, qanday?']
-  const current = groups[step]
+  const [answers, setAnswers] = useState<Plan>({})
+
+  const place = answers.place?.id
+  const steps: Array<{ key: string; title: string; choices: Choice[] }> = [
+    { key: 'day', title: 'Qaysi kun?', choices: DAYS },
+    { key: 'place', title: 'Qayerga boramiz?', choices: PLACES },
+    ...(place === 'cinema' ? [{ key: 'film', title: 'Qaysi kayfiyatdagi film?', choices: FILMS }] : []),
+    ...(place === 'park' ? [{ key: 'park', title: 'Qanday park?', choices: PARKS }] : []),
+    ...(place === 'book' ? [{ key: 'book', title: 'Qanday kitob?', choices: BOOKS }] : []),
+    { key: 'time', title: 'Qachon boshlaymiz?', choices: TIMES },
+    { key: 'finish', title: 'Kunni qanday yakunlaymiz?', choices: FINISHES },
+  ]
+
+  const done = step >= steps.length
+  const current = steps[step]
   const choose = (choice: Choice) => {
-    setAnswers((prev) => ({ ...prev, [String(step)]: choice }))
-    setStep((value) => Math.min(value + 1, groups.length))
+    setAnswers((prev) => ({ ...prev, [current.key]: choice }))
+    setStep((value) => value + 1)
   }
-  const done = step >= groups.length
+  const restart = () => { setAnswers({}); setStep(0) }
 
   return <section className="planner" aria-label="Birinchi kun rejalashtirgichi">
-    <div className="planner-topline"><span>08 / 08 — Birga rejalash</span><span>{done ? 'Tayyor' : `${step + 1} / ${groups.length}`}</span></div>
+    <div className="planner-topline"><span>08 / 08 — Birga rejalash</span><span>{done ? 'Tayyor' : `${step + 1} / ${steps.length}`}</span></div>
     <AnimatePresence mode="wait">
-      {!done ? <motion.div key={step} className="planner-step" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -18 }} transition={{ duration: .55 }}>
-        <span className="eyebrow">Birinchi kun</span><h2>{titles[step]}</h2>
-        <div className="choice-list">{current.map((choice) => <motion.button key={choice.id} className="choice" whileHover={{ x: 8 }} whileTap={{ scale: .985 }} onClick={() => choose(choice)}><span className="choice-label">{choice.label}</span><span className="choice-meta">{choice.meta}</span><span className="choice-arrow">↗</span></motion.button>)}</div>
-      </motion.div> : <motion.div key="done" className="planner-summary" initial={{ opacity: 0, scale: .96 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: .8 }}>
+      {!done && current ? <motion.div key={current.key} className="planner-step" initial={{ opacity: 0, y: 24, filter: 'blur(5px)' }} animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }} exit={{ opacity: 0, y: -18, filter: 'blur(4px)' }} transition={{ duration: .6, ease: [0.16, 1, .3, 1] }}>
+        <span className="eyebrow">Birinchi kun · {step + 1}</span><h2>{current.title}</h2>
+        <div className="choice-list">{current.choices.map((choice, index) => <motion.button key={choice.id} className="choice" initial={{ opacity: 0, x: -18 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: index * .08, duration: .45 }} whileHover={{ x: 8 }} whileTap={{ scale: .985 }} onClick={() => choose(choice)}><span className="choice-label">{choice.label}</span><span className="choice-meta">{choice.meta}</span><span className="choice-arrow">↗</span></motion.button>)}</div>
+      </motion.div> : <motion.div key="done" className="planner-summary" initial={{ opacity: 0, scale: .96, filter: 'blur(8px)' }} animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }} transition={{ duration: .9 }}>
         <span className="eyebrow">Birgalikdagi reja</span><h2>Unda boshlanishi shunday bo‘lsin.</h2>
-        <div className="summary-list">{Object.values(answers).map((answer) => <div className="summary-row" key={answer.id}><span>{answer.label}</span><small>{answer.meta}</small></div>)}</div>
-        <p>Qolganini o‘sha kuni o‘zimiz hal qilamiz. Rejaning o‘zi emas, birga qilinishi muhim.</p>
+        <div className="summary-list">{Object.entries(answers).map(([key, answer]) => <div className="summary-row" key={key}><span>{answer.label}</span><small>{answer.meta}</small></div>)}</div>
+        <p>Rejaning o‘zi emas, uni birga tanlash muhim. Qolganini o‘sha kuni o‘zimiz hal qilamiz.</p>
+        <button className="planner-reset" onClick={restart}>Qaytadan tanlash</button>
       </motion.div>}
     </AnimatePresence>
   </section>
