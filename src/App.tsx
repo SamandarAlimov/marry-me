@@ -8,6 +8,7 @@ import { Constellation } from './components/Constellation'
 import { FirstDayPlanner } from './components/FirstDayPlanner'
 import { FlowerField } from './components/FlowerField'
 import { InteractiveGarden } from './components/InteractiveGarden'
+import { LivingAtmosphere } from './components/LivingAtmosphere'
 import { LivingGarden } from './components/LivingGarden'
 import { Starfield } from './components/Starfield'
 import { SceneTransition } from './components/SceneTransition'
@@ -49,6 +50,7 @@ export function App() {
     <Starfield active={cosmic} />
     <Constellation active={scene === 'constellation'} formed={scene !== 'night'} />
     <LivingGarden active={garden} />
+    <LivingAtmosphere active={garden} />
     <FlowerField active={bloom} progress={scene === 'bloom' ? story.growthProgress : 1} />
     <Butterflies active={accepted} />
     <InteractiveGarden active={garden} />
