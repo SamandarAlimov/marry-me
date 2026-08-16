@@ -14,6 +14,7 @@ import { Starfield } from './components/Starfield'
 import { SceneTransition } from './components/SceneTransition'
 import { initialStoryState, reduceStory } from './engine/story'
 import type { StoryEvent, StoryState } from './engine/story'
+import './styles/environment-camera.css'
 
 export function App() {
   const [story, setStory] = useState<StoryState>(initialStoryState)
