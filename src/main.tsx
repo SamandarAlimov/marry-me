@@ -5,6 +5,7 @@ import './styles.css'
 import './hero-garden.css'
 import './styles/planner.css'
 import './styles/living-atmosphere.css'
+import './styles/choice-preview.css'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
