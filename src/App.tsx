@@ -45,17 +45,18 @@ export function App() {
   }, [scene])
 
   return <main className={`experience scene-${scene}`}>
-    <Atmosphere />
-    <AtmosphericMotes active={bloom} intensity={accepted ? 1.8 : scene === 'question' ? 1.35 : .8} />
-    <Starfield active={cosmic} />
-    <Constellation active={scene === 'constellation'} formed={scene !== 'night'} />
-    <LivingGarden active={garden} />
-    <LivingAtmosphere active={garden} />
-    <FlowerField active={bloom} progress={scene === 'bloom' ? story.growthProgress : 1} />
-    <Butterflies active={accepted} />
-    <InteractiveGarden active={garden} />
-    <AcceptanceBurst active={accepted} />
-    <motion.div className="camera" style={{ x: cameraX, y: cameraY }} aria-hidden="true" />
+    <motion.div className="environment-camera" style={{ x: cameraX, y: cameraY }} aria-hidden="true">
+      <Atmosphere />
+      <AtmosphericMotes active={bloom} intensity={accepted ? 1.8 : scene === 'question' ? 1.35 : .8} />
+      <Starfield active={cosmic} />
+      <Constellation active={scene === 'constellation'} formed={scene !== 'night'} />
+      <LivingGarden active={garden} growthProgress={scene === 'growth' ? story.growthProgress : 1} />
+      <LivingAtmosphere active={garden} />
+      <FlowerField active={bloom} progress={scene === 'bloom' ? story.growthProgress : 1} />
+      <Butterflies active={accepted} />
+      <InteractiveGarden active={garden} />
+      <AcceptanceBurst active={accepted} />
+    </motion.div>
     <div className="grain" /><div className="moon" /><div className="orb orb-a" /><div className="orb orb-b" />
     <SceneTransition sceneKey={scene}>
       <motion.div className="scene" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.1, ease: 'easeOut' }}>
